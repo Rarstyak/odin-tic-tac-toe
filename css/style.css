@@ -1,0 +1,54 @@
+:root {
+    --color-player-none: lightgray;
+    --color-player-one: lightcoral;
+    --color-player-two: lightblue;
+}
+
+#game {
+    height: 100vh;
+    display: grid;
+    grid:
+        1fr
+        / 10rem 1fr 10rem;
+}
+
+#game div {
+    display: grid;
+    place-content: center;
+}
+
+#game div[class^='player'] {
+    border: 2px solid black;
+}
+
+#game div[class='player-one'] {
+    background-color: var(--color-player-one);
+}
+
+#game div[class^='player-two'] {
+    background-color: var(--color-player-two);
+}
+
+#game .gameboard {
+    grid: 
+        1fr
+        1fr
+        1fr
+        / 1fr 1fr 1fr;
+}
+
+button {
+    font-size: 4rem;
+}
+
+button[data-mark=' '] {
+    background-color: var(--color-player-none);
+}
+
+button[data-mark='O'] {
+    background-color: var(--color-player-one);
+}
+
+button[data-mark='X'] {
+    background-color: var(--color-player-two);
+}
