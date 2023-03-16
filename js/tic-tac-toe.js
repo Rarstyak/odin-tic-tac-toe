@@ -201,14 +201,16 @@ const GameController = () => {
 const DisplayController = (() => {
     const _game = GameController();
     const _board = _game.getGameBoard().getBoard();
-    const _cellDivs = [];
+    const _cellButtons = [];
 
     // make and get all of the div s
     const _gameDiv = document.querySelector('#game');
 
+    const _optionsDiv = document.createElement('div');
     const _playerOneDiv = document.createElement('div');
     const _gameBoardDiv = document.createElement('div');
     const _playerTwoDiv = document.createElement('div');
+    const _infoDiv = document.createElement('div');
 
     const _playerOneName = document.createElement('div');
     const _playerTwoName = document.createElement('div');
@@ -216,9 +218,11 @@ const DisplayController = (() => {
     const _playerOneWins = document.createElement('div');
     const _playerTwoWins = document.createElement('div');
 
+    _optionsDiv.classList.add('options');
     _playerOneDiv.classList.add('player-one');
     _gameBoardDiv.classList.add('gameboard');
     _playerTwoDiv.classList.add('player-two');
+    _infoDiv.classList.add('info');
 
     _playerOneDiv.appendChild(_playerOneName);
     _playerTwoDiv.appendChild(_playerTwoName);
@@ -226,9 +230,11 @@ const DisplayController = (() => {
     _playerOneDiv.appendChild(_playerOneWins);
     _playerTwoDiv.appendChild(_playerTwoWins);
 
+    _gameDiv.appendChild(_optionsDiv);
     _gameDiv.appendChild(_playerOneDiv);
     _gameDiv.appendChild(_gameBoardDiv);
     _gameDiv.appendChild(_playerTwoDiv);
+    _gameDiv.appendChild(_infoDiv);
 
     // On click, play round, then render
     const clickCell = (e) => {
@@ -237,36 +243,45 @@ const DisplayController = (() => {
         return _game.playTurn(row, col) ? render() : false;
     };
 
+    const restart = () => {
+        _game.newGame();
+        render();
+    };
+
     // Initialize buttons
     _board.forEach(
         (row, rowIndex) => {
             row.forEach(
                 (cell, colIndex) => {
-                    const cellDiv = document.createElement('button');
+                    const cellButton = document.createElement('button');
                     const mark = cell.getMark()
-                    cellDiv.setAttribute('data-mark', mark);
-                    cellDiv.setAttribute('data-row', rowIndex);
-                    cellDiv.setAttribute('data-col', colIndex);
+                    cellButton.setAttribute('data-mark', mark);
+                    cellButton.setAttribute('data-row', rowIndex);
+                    cellButton.setAttribute('data-col', colIndex);
                     // Could replace this with an img or svg later
-                    cellDiv.textContent = mark;
+                    cellButton.textContent = mark;
                     // Add event handler
-                    cellDiv.addEventListener('click', clickCell);
+                    cellButton.addEventListener('click', clickCell);
                     // Add to ref arrays
-                    _gameBoardDiv.appendChild(cellDiv);
-                    _cellDivs.push(cellDiv);
+                    _gameBoardDiv.appendChild(cellButton);
+                    _cellButtons.push(cellButton);
                 }
             )
         }
     );
 
+    const newGameButton = document.createElement('button');
+    newGameButton.textContent = 'Restart';
+    newGameButton.addEventListener('click', restart);
+    _optionsDiv.appendChild(newGameButton);
+
     // player name change
-    // new Game button
     // display last winner and display current wins
 
     const getGame = () => _game;
 
     const render = () => {
-        console.log("render")
+        // console.log("render")
         let players = _game.getPlayers();
         _playerOneName.textContent = players[0].name;
         _playerTwoName.textContent = players[1].name;
@@ -274,7 +289,7 @@ const DisplayController = (() => {
         _playerOneWins.textContent = players[0].getWins();
         _playerTwoWins.textContent = players[1].getWins();
 
-        _cellDivs.forEach(
+        _cellButtons.forEach(
             (cellDiv) => {
                 const row = cellDiv.getAttribute('data-row');
                 const col = cellDiv.getAttribute('data-col');
@@ -284,6 +299,14 @@ const DisplayController = (() => {
                 cellDiv.textContent = mark;
             }
         );
+
+        if (_game.getWinner() === 'TIE') {
+            _infoDiv.textContent = `It's a tie! Press Restart at the top!`;
+        } else if (_game.getWinner()) {
+            _infoDiv.textContent = `${_game.getWinner().name} Won! Press Restart at the top!`;
+        } else {
+            _infoDiv.textContent = `It's ${_game.getActivePlayer().name}'s turn!`;
+        }
 
         return true;
     };

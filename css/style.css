@@ -4,12 +4,28 @@
     --color-player-two: lightblue;
 }
 
+body {
+    margin: 0;
+}
+
 #game {
     height: 100vh;
     display: grid;
     grid:
-        1fr
+        "options options options" 2rem
+        "player-one gameboard player-two" 1fr
+        "info info info" 2rem
         / 10rem 1fr 10rem;
+}
+
+#game .options {
+    grid-area: options;
+    background-color: grey;
+}
+
+#game .info {
+    grid-area: info;
+    background-color: grey;
 }
 
 #game div {
@@ -23,13 +39,16 @@
 
 #game div[class='player-one'] {
     background-color: var(--color-player-one);
+    grid-area: player-one;
 }
 
 #game div[class^='player-two'] {
     background-color: var(--color-player-two);
+    grid-area: player-two;
 }
 
 #game .gameboard {
+    grid-area: gameboard;
     grid: 
         1fr
         1fr
