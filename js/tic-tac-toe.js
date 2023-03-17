@@ -101,7 +101,8 @@ const GameController = () => {
     const getActivePlayer = () => activePlayer;
 
     const switchActivePlayer = () => {
-        // Toggle between player 1 and 2
+        // Toggle between player 0 and 1, does not support multiple player history
+        // To support multiple player history, would need to adjust _players
         activePlayer = (activePlayer === _players[1]) ? _players[0] : _players[1];
     };
 
@@ -207,34 +208,63 @@ const DisplayController = (() => {
     const _gameDiv = document.querySelector('#game');
 
     const _optionsDiv = document.createElement('div');
-    const _playerOneDiv = document.createElement('div');
+
+    const _playerLeftDiv = document.createElement('div');
     const _gameBoardDiv = document.createElement('div');
-    const _playerTwoDiv = document.createElement('div');
+    const _playerRightDiv = document.createElement('div');
+
     const _infoDiv = document.createElement('div');
 
-    const _playerOneName = document.createElement('div');
-    const _playerTwoName = document.createElement('div');
+    const _playerLeftName = document.createElement('button');
+    const _playerRightName = document.createElement('button');
 
-    const _playerOneWins = document.createElement('div');
-    const _playerTwoWins = document.createElement('div');
+    const _playerLeftWins = document.createElement('div');
+    const _playerRightWins = document.createElement('div');
 
     _optionsDiv.classList.add('options');
-    _playerOneDiv.classList.add('player-one');
+
+    _playerLeftDiv.classList.add('player-left');
     _gameBoardDiv.classList.add('gameboard');
-    _playerTwoDiv.classList.add('player-two');
+    _playerRightDiv.classList.add('player-right');
+
     _infoDiv.classList.add('info');
 
-    _playerOneDiv.appendChild(_playerOneName);
-    _playerTwoDiv.appendChild(_playerTwoName);
+    _playerLeftDiv.appendChild(_playerLeftName);
+    _playerRightDiv.appendChild(_playerRightName);
 
-    _playerOneDiv.appendChild(_playerOneWins);
-    _playerTwoDiv.appendChild(_playerTwoWins);
+    _playerLeftDiv.appendChild(_playerLeftWins);
+    _playerRightDiv.appendChild(_playerRightWins);
 
     _gameDiv.appendChild(_optionsDiv);
-    _gameDiv.appendChild(_playerOneDiv);
+    _gameDiv.appendChild(_playerLeftDiv);
     _gameDiv.appendChild(_gameBoardDiv);
-    _gameDiv.appendChild(_playerTwoDiv);
+    _gameDiv.appendChild(_playerRightDiv);
     _gameDiv.appendChild(_infoDiv);
+
+    // Player name change
+    const changeName = (e) => {
+        const playerNumber = e.target.getAttribute('data-player');
+        const playerName = _game.getPlayers()[playerNumber].name;
+        const promptName = prompt(`Please enter a new name for ${playerName}`);
+        _game.getPlayers()[playerNumber].name = promptName ? promptName : playerName;
+        render();
+    }
+
+    _playerLeftName.setAttribute('data-player', 0);
+    _playerRightName.setAttribute('data-player', 1);
+    _playerLeftName.addEventListener('click', changeName);
+    _playerRightName.addEventListener('click', changeName);
+
+    // Restart Button
+    const restart = () => {
+        _game.newGame();
+        render();
+    };
+
+    const newGameButton = document.createElement('button');
+    newGameButton.textContent = 'Restart';
+    newGameButton.addEventListener('click', restart);
+    _optionsDiv.appendChild(newGameButton);
 
     // On click, play round, then render
     const clickCell = (e) => {
@@ -243,12 +273,7 @@ const DisplayController = (() => {
         return _game.playTurn(row, col) ? render() : false;
     };
 
-    const restart = () => {
-        _game.newGame();
-        render();
-    };
-
-    // Initialize buttons
+    // Game Cell Buttons
     _board.forEach(
         (row, rowIndex) => {
             row.forEach(
@@ -270,24 +295,19 @@ const DisplayController = (() => {
         }
     );
 
-    const newGameButton = document.createElement('button');
-    newGameButton.textContent = 'Restart';
-    newGameButton.addEventListener('click', restart);
-    _optionsDiv.appendChild(newGameButton);
-
-    // player name change
-    // display last winner and display current wins
-
     const getGame = () => _game;
 
     const render = () => {
         // console.log("render")
-        let players = _game.getPlayers();
-        _playerOneName.textContent = players[0].name;
-        _playerTwoName.textContent = players[1].name;
+        const players = _game.getPlayers();
+        const leftPlayerNumber = _playerLeftName.getAttribute('data-player');
+        const rightPlayerNumber = _playerRightName.getAttribute('data-player');
 
-        _playerOneWins.textContent = players[0].getWins();
-        _playerTwoWins.textContent = players[1].getWins();
+        _playerLeftName.textContent = players[leftPlayerNumber].name;
+        _playerRightName.textContent = players[rightPlayerNumber].name;
+
+        _playerLeftWins.textContent = players[leftPlayerNumber].getWins();
+        _playerRightWins.textContent = players[rightPlayerNumber].getWins();
 
         _cellButtons.forEach(
             (cellDiv) => {

@@ -1,7 +1,7 @@
 :root {
     --color-player-none: lightgray;
-    --color-player-one: lightcoral;
-    --color-player-two: lightblue;
+    --color-player-left: lightcoral;
+    --color-player-right: lightblue;
 }
 
 body {
@@ -13,7 +13,7 @@ body {
     display: grid;
     grid:
         "options options options" 2rem
-        "player-one gameboard player-two" 1fr
+        "player-left gameboard player-right" 1fr
         "info info info" 2rem
         / 10rem 1fr 10rem;
 }
@@ -37,17 +37,18 @@ body {
     border: 2px solid black;
 }
 
-#game div[class='player-one'] {
-    background-color: var(--color-player-one);
-    grid-area: player-one;
+#game div[class='player-left'] {
+    background-color: var(--color-player-left);
+    grid-area: player-left;
 }
 
-#game div[class^='player-two'] {
-    background-color: var(--color-player-two);
-    grid-area: player-two;
+#game div[class='player-right'] {
+    background-color: var(--color-player-right);
+    grid-area: player-right;
 }
 
 #game .gameboard {
+    border: 2px solid black;
     grid-area: gameboard;
     grid: 
         1fr
@@ -56,18 +57,18 @@ body {
         / 1fr 1fr 1fr;
 }
 
-button {
-    font-size: 4rem;
+.gameboard button {
+    font-size: 3rem;
 }
 
-button[data-mark=' '] {
+.gameboard button[data-mark=' '] {
     background-color: var(--color-player-none);
 }
 
-button[data-mark='O'] {
-    background-color: var(--color-player-one);
+.gameboard button[data-mark='O'] {
+    background-color: var(--color-player-left);
 }
 
-button[data-mark='X'] {
-    background-color: var(--color-player-two);
+.gameboard button[data-mark='X'] {
+    background-color: var(--color-player-right);
 }
